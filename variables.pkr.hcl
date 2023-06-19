@@ -12,6 +12,10 @@ variable "default_username" {
 
 variable "default_password" {
     type = string
+    validation {
+        condition     = can(regex("^\$6\$", var.default_password))
+        error_message = "The default_password must be encrypted with openssl, i.e.: echo 'YourPassword' | openssl passwd -6 -stdin"
+    }
 }
 
 variable "sha" {
