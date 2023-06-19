@@ -12,7 +12,6 @@ source "arm-image" "raspberry_pi_os_64bit" {
     iso_url                   = "https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2023-05-03/2023-05-03-raspios-bullseye-arm64-lite.img.xz"
     iso_checksum              = "sha256:bf982e56b0374712d93e185780d121e3f5c3d5e33052a95f72f9aed468d58fa7"
     last_partition_extra_size = 268435456
-    iso_target_extension      = "img.xz"
     output_filename           = "2023-05-03-raspios-bullseye-arm64-lite_custom.img"
     qemu_binary               = "qemu-aarch64-static"
 }

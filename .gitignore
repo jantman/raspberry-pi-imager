@@ -1,3 +1,5 @@
 *.img
+*.img.tar.gz
+*.img.sha256sum
 packer_cache/
 variables.auto.pkrvars.hcl
