@@ -41,6 +41,7 @@ build {
     provisioner "file" {
         destination = "/etc/wpa_supplicant/wpa_supplicant.conf"
         content     = <<-EOS
+        # put in place by ${var.repo}
         ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
         update_config=1
         country=US
@@ -52,10 +53,47 @@ build {
         EOS
     }
 
+    # agetty restart every 60 seconds to show new /etc/issue.d files
+    provisioner "file" {
+        destination = "/etc/systemd/system/getty@tty1.service.d/restart.conf"
+        content     = <<-EOS
+        # put in place by ${var.repo}
+        [Service]
+        # the VT is cleared by TTYVTDisallocate
+        # The '-o' option value tells agetty to replace 'login' arguments with an
+        # option to preserve environment (-p), followed by '--' for safety, and then
+        # the entered username.
+        ExecStart=
+        ExecStart=-/sbin/agetty -o '-p -- \\u' --noclear --timeout 60 %I $TERM
+        EOS
+    }
+
+    # script to generate /etc/issue.d/rpi-image.issue
+    provisioner "file" {
+        destination = "/usr/local/bin/generate-rpi-image-issue"
+        source      = "generate-rpi-image-issue.sh"
+    }
+
+    # cron.d file to trigger script every minute
+    provisioner "file" {
+        destination = "/etc/cron.d/rpi_imager"
+        content     = "* * * * * root /usr/local/bin/generate-rpi-image-issue"
+    }
+
+    # script to configure Pi after boot
+    provisioner "file" {
+        destination = "/root/configure-pi.sh"
+        source      = "configure-pi.sh"
+    }
+
     provisioner "shell" {
         inline = [
             "chmod 0644 /etc/image_version",
             "chmod 0600 /etc/wpa_supplicant/wpa_supplicant.conf",
+            "chmod 0644 /etc/systemd/system/getty@tty1.service.d/restart.conf",
+            "chmod 0755 /usr/local/bin/generate-rpi-image-issue",
+            "chmod 0644 /etc/cron.d/rpi_imager",
+            "chmod 0700 /root/configure-pi.sh",
             # enable SSH
             "touch /boot/ssh",
             # set hostname
