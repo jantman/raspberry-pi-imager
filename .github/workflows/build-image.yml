@@ -34,7 +34,9 @@ jobs:
         id: build
         run: "sudo -E packer build ./"
       - name: chown
-        run: sudo chown -R runner:docker *
+        run: sudo chown -v -R runner:docker *
+      - name: ls
+        run: ls -l
       - name: Create Release
         if: github.ref_name == 'main'
         uses: ncipollo/release-action@v1
