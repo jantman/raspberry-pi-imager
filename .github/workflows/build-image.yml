@@ -15,6 +15,8 @@ jobs:
       PKR_VAR_sha: "${{ github.sha }}"
     steps:
       - uses: actions/checkout@v3
+      - name: test
+        run: ls -latr && exit 1
       - name: Set Release Name
         id: set-release-name
         run: echo "RELEASE=build${{ github.run_number }}_$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
@@ -33,6 +35,8 @@ jobs:
       - name: Run `packer build`
         id: build
         run: "sudo -E packer build ./"
+      - name: chown
+        run: exit 1
       - name: Create Release
         if: github.ref_name == 'main'
         uses: ncipollo/release-action@v1
