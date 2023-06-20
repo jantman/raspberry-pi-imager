@@ -19,16 +19,45 @@ source "arm-image" "raspberry_pi_os_64bit" {
 build {
     sources = ["source.arm-image.raspberry_pi_os_64bit"]
 
+    #########################################################
+    # NOTE: file provisioners - be sure to chmod afterwards #
+    #########################################################
+    provisioner "file" {
+        destination = "/etc/image_version"
+        content     = <<-EOS
+        IMAGE_REPO='${var.repo}'
+        IMAGE_SHA='${var.sha}'
+        IMAGE_RELEASE='${var.release}'
+        EOS
+    }
+
+    # default user configuration
+    provisioner "file" {
+        destination = "/boot/userconf"
+        content     = "${var.default_username}:${var.default_password}"
+    }
+
+    # set WiFi credentials - NOTE that `raspi-config nonint do_wifi_ssid_passphrase` doesn't work in a chroot
+    provisioner "file" {
+        destination = "/etc/wpa_supplicant/wpa_supplicant.conf"
+        content     = <<-EOS
+        ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+        update_config=1
+        country=US
+
+        network={
+            ssid="${var.wifi_name}"
+            psk="${var.wifi_password}"
+        }
+        EOS
+    }
+
     provisioner "shell" {
         inline = [
-            # write repo and sha to /etc/image_version file
-            "echo \"IMAGE_REPO='${var.repo}'\" > /etc/image_version",
-            "echo \"IMAGE_SHA='${var.sha}'\" >> /etc/image_version",
-            "echo \"IMAGE_RELEASE='${var.release}'\" >> /etc/image_version",
+            "chmod 0644 /etc/image_version",
+            "chmod 0600 /etc/wpa_supplicant/wpa_supplicant.conf",
             # enable SSH
             "touch /boot/ssh",
-            # set default user and password
-            "echo '${var.default_username}:${var.default_password}' > /boot/userconf",
             # set hostname
             "raspi-config nonint do_hostname custom-pi-${var.sha}",
             # set locale
@@ -43,15 +72,6 @@ build {
             "raspi-config nonint do_wifi_country US",
             # disable rfkill
             "bash -c 'for filename in /var/lib/systemd/rfkill/*:wlan ; do [[ -e \"$filename\" ]] && echo 0 > \"$filename\"; done'",
-            # set WiFi credentials - NOTE that `raspi-config nonint do_wifi_ssid_passphrase` doesn't work in a chroot
-            "echo 'ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev' > /etc/wpa_supplicant/wpa_supplicant.conf",
-            "echo 'update_config=1' >> /etc/wpa_supplicant/wpa_supplicant.conf",
-            "echo 'country=US' >> /etc/wpa_supplicant/wpa_supplicant.conf",
-            "echo '' >> /etc/wpa_supplicant/wpa_supplicant.conf",
-            "echo 'network={' >> /etc/wpa_supplicant/wpa_supplicant.conf",
-            "echo '    ssid=\"${var.wifi_name}\"' >> /etc/wpa_supplicant/wpa_supplicant.conf",
-            "echo '    psk=\"${var.wifi_password}\"' >> /etc/wpa_supplicant/wpa_supplicant.conf",
-            "echo '}' >> /etc/wpa_supplicant/wpa_supplicant.conf",
             # disable prompt to run raspi-config after boot
             "raspi-config nonint disable_raspi_config_at_boot",
         ]
