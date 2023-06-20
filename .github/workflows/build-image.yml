@@ -13,6 +13,7 @@ jobs:
       PKR_VAR_wifi_password: ${{ secrets.PKR_VAR_WIFI_PASSWORD }}
       PKR_VAR_repo: "${{ github.server_url }}/${{ github.repository }}"
       PKR_VAR_sha: "${{ github.sha }}"
+      PKR_VAR_release: "${{ steps.set-release-name.outputs.RELEASE }}"
     steps:
       - uses: actions/checkout@v3
       - name: Set Release Name

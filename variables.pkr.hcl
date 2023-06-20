@@ -27,3 +27,9 @@ variable "repo" {
     type        = string
     description = "git repo URL"
 }
+
+variable "release" {
+    type        = string
+    description = "github release name, or local"
+    default     = "local"
+}
