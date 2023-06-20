@@ -29,10 +29,10 @@ jobs:
           version: 1.0
       - name: Run `packer init`
         id: init
-        run: "packer init ./"
+        run: "sudo packer init ./"
       - name: Run `packer build`
         id: build
-        run: "packer build ./"
+        run: "sudo packer build ./"
       - name: Create Release
         if: github.ref_name == 'main'
         uses: ncipollo/release-action@v1
