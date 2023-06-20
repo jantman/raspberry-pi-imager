@@ -23,7 +23,7 @@ jobs:
         with:
           version: "1.9.1"
       - name: install dependencies
-        run: sudo apt-get install qemu-user-static
+        run: sudo apt-get update && sudo apt-get install qemu-user-static
       - name: Run `packer init`
         id: init
         run: "packer init ./"
