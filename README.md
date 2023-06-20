@@ -40,6 +40,8 @@ The first step is to build a base image, which will be written to the SD card fo
 
 **IMPORTANT: ONLY USE ON PRIVATE REPOSITORIES!** This will expose your Pi username/password, WiFi SSID and passphrase, and everything else in the image to anyone who can access the repository. This is ONLY recommended for private repos!
 
+Just push a new commit to the repo and it will be built. If it's on the `main` branch, it will be uploaded as a Release.
+
 ### Locally
 
 To build locally with Docker, run `./build_docker.sh` which is based on the example in the [packer-plugin-arm-image README](https://github.com/solo-io/packer-plugin-arm-image#running-with-docker) with slight modifications. **NOTE** that `./packer_cache/` will contain root-owned files.

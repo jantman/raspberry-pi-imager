@@ -1,0 +1,48 @@
+name: Build Image
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      PKR_VAR_default_password: ${{ secrets.PKR_VAR_DEFAULT_PASSWORD }}
+      PKR_VAR_default_username: ${{ secrets.PKR_VAR_DEFAULT_USERNAME }}
+      PKR_VAR_wifi_name: ${{ secrets.PKR_VAR_WIFI_NAME }}
+      PKR_VAR_wifi_password: ${{ secrets.PKR_VAR_WIFI_PASSWORD }}
+      PKR_VAR_repo: "${{ github.server_url }}/${{ github.repository }}"
+      PKR_VAR_sha: "${{ github.sha }}"
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set Release Name
+        id: set-release-name
+        run: echo "RELEASE=build${{ github.run_number }}_$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - name: Setup packer
+        uses: hashicorp/setup-packer@main
+        with:
+          version: "1.9.1"
+      - name: install dependencies
+        run: sudo apt-get install qemu-user-static e2fsck resize2fs
+      - name: Run `packer init`
+        id: init
+        run: "packer init ./"
+      - name: Run `packer build`
+        id: build
+        run: "packer build ./"
+      - name: Create Release
+        if: github.ref_name == 'main'
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.set-release-name.outputs.RELEASE }}
+          makeLatest: true
+          artifacts: "*.img.tar.gz,*.img.sha256sum"
+          body: ${{ steps.set-release-name.outputs.RELEASE }}
+      - name: Archive Output
+        if: github.ref_name != 'main'
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-result
+          path: |
+            *.img.tar.gz
+            *.img.sha256sum
