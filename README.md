@@ -17,8 +17,8 @@ The final step of customization is seeding a customization script into the image
 
 ## Usage
 
-1. Obtain the newest image, either via the "Releases" for this repository (if used) or via [Building Locally](#locally).
-   * If downloading from GitHub Releases, first extract the image (`tar -xzvf 2023-05-03-raspios-bullseye-arm64-lite_custom.img.tar.gz`) and then verify its checksum (`sha256sum -c 2023-05-03-raspios-bullseye-arm64-lite_custom.img.sha256sum`)
+1. Obtain the newest base image, either via the "Releases" for this repository (if used) or via [Building Locally](#locally).
+   * If downloading from GitHub Releases, be sure to download both the `.img.tar.gz` and `.img.sha256sum` files. First extract the image (`tar -xzvf 2023-05-03-raspios-bullseye-arm64-lite_custom.img.tar.gz`) and then verify its checksum (`sha256sum -c 2023-05-03-raspios-bullseye-arm64-lite_custom.img.sha256sum`).
 2. Plug a SD card into your computer and note the device (``/dev/sdX`` in the next step) that it's assigned to (i.e. via `sudo dmesg`).
 3. Write the image from Step 1 (``foo.img`` in this example) to the SD card: ``sudo dd bs=4M if=foo.img of=/dev/sdX conv=fsync status=progress``
 4. **TBD.**
@@ -30,7 +30,7 @@ Note that while Packer used JSON templates in early versions, it now uses HCL2 a
 For configuring the WiFi SSID and passphrase, default username and password, and other variables in the `.pkr.hcl` files:
 
 * **If building locally,** copy [variables.auto.pkrvars.EXAMPLE.hcl](variables.auto.pkrvars.EXAMPLE.hcl) to `variables.auto.pkrvars.hcl` and edit its content. Note that this file is in [.gitignore](.gitignore) by default.
-* **If building via GitHub Actions**, define [repository secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository) with the appropriate names for each required variable: ``PKR_VAR_wifi_name``, ``PKR_VAR_wifi_password``, ``PKR_VAR_default_username`` and ``PKR_VAR_default_password``
+* **If building via GitHub Actions**, define [repository secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository) with the appropriate names for each required variable: ``PKR_VAR_wifi_name``, ``PKR_VAR_wifi_password``, ``PKR_VAR_default_username`` and ``PKR_VAR_default_password``.
 
 ## Building Base Images
 
