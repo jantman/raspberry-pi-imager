@@ -21,7 +21,10 @@ The final step of customization is seeding a customization script into the image
    * If downloading from GitHub Releases, be sure to download both the `.img.tar.gz` and `.img.sha256sum` files. First extract the image (`tar -xzvf 2023-05-03-raspios-bullseye-arm64-lite_custom.img.tar.gz`) and then verify its checksum (`sha256sum -c 2023-05-03-raspios-bullseye-arm64-lite_custom.img.sha256sum`).
 2. Plug a SD card into your computer and note the device (``/dev/sdX`` in the next step) that it's assigned to (i.e. via `sudo dmesg`).
 3. Write the image from Step 1 (``foo.img`` in this example) to the SD card: ``sudo dd if=foo.img of=/dev/sdX bs=4M conv=fsync status=progress``
-4. **TBD**
+4. Put the SD card in the Pi and boot it up. Either watch the on-screen output or your network's DHCP server to find its IP address.
+5. SSH to the Pi with the default username and password (`pi:raspberry` in this repo) and `sudo su -` to root.
+6. Run `./configure-pi.sh` to set the hostname, change (if desired) the password for the default user, create root SSH keys, and be prompted to update packages and reboot.
+7. Follow your specific post-installation steps (such as adding the root SSH key to a private GitHub repo and configuring via Puppet).
 
 ## Configuration
 
