@@ -1,4 +1,6 @@
 #!/bin/bash
+# put in place by a clone of https://github.com/jantman/raspberry-pi-imager
+# see /etc/image_version for repository path and version
 
 DEST=/etc/issue.d/rpi-image.issue
 source /etc/image_version

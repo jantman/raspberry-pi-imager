@@ -80,10 +80,26 @@ build {
         content     = "* * * * * root /usr/local/bin/generate-rpi-image-issue"
     }
 
+    # enable /etc/cron.d support
+    provisioner "file" {
+        destination = "/etc/default/cron"
+        source      = "default-cron"
+    }
+
     # script to configure Pi after boot
     provisioner "file" {
         destination = "/root/configure-pi.sh"
         source      = "configure-pi.sh"
+    }
+
+    provisioner "shell" {
+        inline = ["install -d -m 0700 -o root -g root /root/.ssh"]
+    }
+
+    # root .ssh/config for github
+    provisioner "file" {
+        destination = "/root/.ssh/config"
+        source      = "ssh-config"
     }
 
     provisioner "shell" {
@@ -94,6 +110,8 @@ build {
             "chmod 0755 /usr/local/bin/generate-rpi-image-issue",
             "chmod 0644 /etc/cron.d/rpi_imager",
             "chmod 0700 /root/configure-pi.sh",
+            "chmod 0644 /etc/default/cron",
+            "install -d -m 0755 -o root -g root /etc/issue.d",
             # enable SSH
             "touch /boot/ssh",
             # set hostname
@@ -112,6 +130,8 @@ build {
             "bash -c 'for filename in /var/lib/systemd/rfkill/*:wlan ; do [[ -e \"$filename\" ]] && echo 0 > \"$filename\"; done'",
             # disable prompt to run raspi-config after boot
             "raspi-config nonint disable_raspi_config_at_boot",
+            # install dependencies
+            "DEBIAN_FRONTEND=noninteractive apt install -y puppet git r10k",
         ]
         inline_shebang = "/bin/sh -ex"
     }
