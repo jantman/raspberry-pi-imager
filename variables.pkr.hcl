@@ -7,7 +7,8 @@ variable "wifi_password" {
 }
 
 variable "default_username" {
-    type = string
+    type    = string
+    default = "pi"
 }
 
 variable "default_password" {
