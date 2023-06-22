@@ -77,13 +77,7 @@ build {
     # cron.d file to trigger script every minute
     provisioner "file" {
         destination = "/etc/cron.d/rpi_imager"
-        content     = "* * * * * root /usr/local/bin/generate-rpi-image-issue"
-    }
-
-    # enable /etc/cron.d support
-    provisioner "file" {
-        destination = "/etc/default/cron"
-        source      = "default-cron"
+        content     = "* * * * * root /usr/local/bin/generate-rpi-image-issue\n"
     }
 
     # script to configure Pi after boot
@@ -110,7 +104,6 @@ build {
             "chmod 0755 /usr/local/bin/generate-rpi-image-issue",
             "chmod 0644 /etc/cron.d/rpi_imager",
             "chmod 0700 /root/configure-pi.sh",
-            "chmod 0644 /etc/default/cron",
             "install -d -m 0755 -o root -g root /etc/issue.d",
             # enable SSH
             "touch /boot/ssh",
@@ -131,7 +124,7 @@ build {
             # disable prompt to run raspi-config after boot
             "raspi-config nonint disable_raspi_config_at_boot",
             # install dependencies
-            "DEBIAN_FRONTEND=noninteractive apt install -y puppet git r10k",
+            "DEBIAN_FRONTEND=noninteractive apt install -y puppet git r10k vim",
         ]
         inline_shebang = "/bin/sh -ex"
     }
