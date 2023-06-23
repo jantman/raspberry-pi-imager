@@ -53,31 +53,16 @@ build {
         EOS
     }
 
-    # agetty restart every 60 seconds to show new /etc/issue.d files
+    # script to write system info to tty1 if nobody is logged in there
     provisioner "file" {
-        destination = "/etc/systemd/system/getty@tty1.service.d/restart.conf"
-        content     = <<-EOS
-        # put in place by ${var.repo}
-        [Service]
-        # the VT is cleared by TTYVTDisallocate
-        # The '-o' option value tells agetty to replace 'login' arguments with an
-        # option to preserve environment (-p), followed by '--' for safety, and then
-        # the entered username.
-        ExecStart=
-        ExecStart=-/sbin/agetty -o '-p -- \\u' --noclear --timeout 60 %I $TERM
-        EOS
-    }
-
-    # script to generate /etc/issue.d/rpi-image.issue
-    provisioner "file" {
-        destination = "/usr/local/bin/generate-rpi-image-issue"
-        source      = "generate-rpi-image-issue.sh"
+        destination = "/usr/local/bin/tty1_system_info"
+        source      = "tty1_system_info.sh"
     }
 
     # cron.d file to trigger script every minute
     provisioner "file" {
-        destination = "/etc/cron.d/rpi_imager"
-        content     = "* * * * * root /usr/local/bin/generate-rpi-image-issue\n"
+        destination = "/etc/cron.d/tty1_system_info"
+        content     = "* * * * * root /usr/local/bin/tty1_system_info\n"
     }
 
     # script to configure Pi after boot
@@ -100,11 +85,9 @@ build {
         inline = [
             "chmod 0644 /etc/image_version",
             "chmod 0600 /etc/wpa_supplicant/wpa_supplicant.conf",
-            "chmod 0644 /etc/systemd/system/getty@tty1.service.d/restart.conf",
-            "chmod 0755 /usr/local/bin/generate-rpi-image-issue",
-            "chmod 0644 /etc/cron.d/rpi_imager",
+            "chmod 0755 /usr/local/bin/tty1_system_info",
+            "chmod 0644 /etc/cron.d/tty1_system_info",
             "chmod 0700 /root/configure-pi.sh",
-            "install -d -m 0755 -o root -g root /etc/issue.d",
             # enable SSH
             "touch /boot/ssh",
             # set hostname
