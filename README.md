@@ -2,6 +2,8 @@
 
 An example/template for baking a base Raspberry Pi image using [Packer](https://www.packer.io/) and pre-seeding a script for further customization.
 
+Template repo based on https://github.com/jantman/raspberry-pi-imager
+
 ## Why and What?
 
 I've got a bunch of Raspberry Pis, as does a local non-profit that I work with. Setting up a new Pi involves a lot of identical steps to get the image ready, and then some device-specific steps to set the hostname, generate SSH keys, etc. Frankly, all of this is a pain, especially when you're setting up a bunch of Pis or something goes wrong and you want to re-image. This repo is intended to reduce much of that work.
@@ -22,7 +24,7 @@ The final step of customization is seeding a customization script into the image
 2. Plug a SD card into your computer and note the device (``/dev/sdX`` in the next step) that it's assigned to (i.e. via `sudo dmesg`).
 3. Write the image from Step 1 (``foo.img`` in this example) to the SD card: ``sudo dd if=foo.img of=/dev/sdX bs=4M conv=fsync status=progress``
 4. Put the SD card in the Pi and boot it up. Either watch the on-screen output or your network's DHCP server to find its IP address.
-5. SSH to the Pi with the default username and password (`pi:raspberry` in this repo) and `sudo su -` to root.
+5. SSH to the Pi with the default username and password (`pi:BuildShareExplore` in this repo) and `sudo su -` to root.
 6. Run `./configure-pi.sh` to set the hostname, change (if desired) the password for the default user, create root SSH keys, and be prompted to update packages and reboot.
 7. Follow your specific post-installation steps (such as adding the root SSH key to a private GitHub repo and configuring via Puppet).
 
