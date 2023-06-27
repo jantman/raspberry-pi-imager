@@ -1,5 +1,7 @@
 # raspberry-pi-imager
 
+[![Project Status: Inactive – The project has reached a stable, usable state but is no longer being actively developed; support/maintenance will be provided as time allows.](https://www.repostatus.org/badges/latest/inactive.svg)](https://www.repostatus.org/#inactive)
+
 An example/template for baking a base Raspberry Pi image using [Packer](https://www.packer.io/) and pre-seeding a script for further customization.
 
 Template repo based on https://github.com/jantman/raspberry-pi-imager
