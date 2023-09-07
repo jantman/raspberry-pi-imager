@@ -1,13 +1,3 @@
-packer {
-    required_version = ">= 1.7.0, <2.0.0"
-    required_plugins {
-        arm-image = {
-            source  = "github.com/solo-io/arm-image"
-            version = ">= 0.0.1"
-        }
-    }
-}
-
 source "arm-image" "raspberry_pi_os_64bit" {
     iso_url                   = "https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2023-05-03/2023-05-03-raspios-bullseye-arm64-lite.img.xz"
     iso_checksum              = "sha256:bf982e56b0374712d93e185780d121e3f5c3d5e33052a95f72f9aed468d58fa7"
