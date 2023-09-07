@@ -21,8 +21,6 @@ jobs:
         with:
           packages: qemu-user-static
           version: 1.0
-      - name: debugging
-        run: rm 64bit.pkr.hcl
       - name: Run `packer init`
         id: init
         run: "sudo -E packer init ./"
@@ -36,7 +34,7 @@ jobs:
           PKR_VAR_release: ${{ steps.set-release-name.outputs.RELEASE }}
       - name: Run `packer build`
         id: build
-        run: "sudo -E packer build ./"
+        run: "sudo -E packer build -parallel-builds=1 ./"
         env:
           PKR_VAR_default_password: ${{ secrets.PKR_VAR_DEFAULT_PASSWORD }}
           PKR_VAR_default_username: ${{ secrets.PKR_VAR_DEFAULT_USERNAME }}
