@@ -21,6 +21,8 @@ jobs:
         with:
           packages: qemu-user-static
           version: 1.0
+      - name: debugging
+        run: rm 64bit.pkr.hcl
       - name: Run `packer init`
         id: init
         run: "sudo -E packer init ./"
