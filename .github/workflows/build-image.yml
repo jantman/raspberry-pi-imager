@@ -4,6 +4,9 @@ on:
     branches:
       - main
   workflow_dispatch:
+permissions:
+  # for creating release and uploading artifact to it
+  contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
