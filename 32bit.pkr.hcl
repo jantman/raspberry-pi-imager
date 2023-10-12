@@ -1,8 +1,8 @@
 source "arm-image" "raspberry_pi_os_32bit" {
-    iso_url                   = "https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2023-05-03/2023-05-03-raspios-bullseye-armhf-lite.img.xz"
-    iso_checksum              = "sha256:b5e3a1d984a7eaa402a6e078d707b506b962f6804d331dcc0daa61debae3a19a"
+    iso_url                   = "https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2023-10-10/2023-10-10-raspios-bookworm-armhf-lite.img.xz"
+    iso_checksum              = "sha256:1f8a646b375b198ef9f48c940889ac9f61744d1c1105b36c578313edbc81a339"
     last_partition_extra_size = 268435456
-    output_filename           = "2023-05-03-raspios-bullseye-armhf-lite_custom.img"
+    output_filename           = "2023-10-10-raspios-bookworm-armhf-lite_custom.img"
 }
 
 build {
@@ -87,8 +87,6 @@ build {
             "raspi-config nonint do_change_timezone America/New_York",
             # text console, no autologin
             "raspi-config nonint do_boot_behaviour B1",
-            # wait for network at boot
-            "raspi-config nonint do_boot_wait 0",
             # set WiFi country
             "raspi-config nonint do_wifi_country US",
             # disable rfkill
@@ -101,11 +99,11 @@ build {
         inline_shebang = "/bin/sh -ex"
     }
     post-processor "checksum" {
-        output         = "2023-05-03-raspios-bullseye-armhf-lite_custom.img.sha256sum"
+        output         = "2023-10-10-raspios-bookworm-armhf-lite_custom.img.sha256sum"
         checksum_types = ["sha256"]
     }
     post-processor "compress" {
-        output              = "2023-05-03-raspios-bullseye-armhf-lite_custom.img.tar.gz"
+        output              = "2023-10-10-raspios-bookworm-armhf-lite_custom.img.tar.gz"
         compression_level   = 9
         keep_input_artifact = true
     }
