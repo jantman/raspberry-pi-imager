@@ -1,8 +1,8 @@
 source "arm-image" "raspberry_pi_os_32bit" {
-    iso_url                   = "https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2023-10-10/2023-10-10-raspios-bookworm-armhf-lite.img.xz"
-    iso_checksum              = "sha256:1f8a646b375b198ef9f48c940889ac9f61744d1c1105b36c578313edbc81a339"
+    iso_url                   = "https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2024-07-04/2024-07-04-raspios-bookworm-armhf-lite.img.xz"
+    iso_checksum              = "sha256:df9c192d66d35e1ce67acde33a5b5f2b81ff02d2b986ea52f1f6ea211d646a1b"
     last_partition_extra_size = 268435456
-    output_filename           = "2023-10-10-raspios-bookworm-armhf-lite_custom.img"
+    output_filename           = "2024-07-04-raspios-bookworm-armhf-lite_custom.img"
 }
 
 build {
@@ -26,19 +26,38 @@ build {
         content     = "${var.default_username}:${var.default_password}"
     }
 
-    # set WiFi credentials - NOTE that `raspi-config nonint do_wifi_ssid_passphrase` doesn't work in a chroot
+    # setup WiFi - copied from what rpi-imager does
     provisioner "file" {
-        destination = "/etc/wpa_supplicant/wpa_supplicant.conf"
+        destination = "/boot/firstrun.sh"
         content     = <<-EOS
-        # put in place by ${var.repo}
-        ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
-        update_config=1
-        country=US
+        #!/bin/bash
 
+        set +e
+
+        if [ -f /usr/lib/raspberrypi-sys-mods/imager_custom ]; then
+        /usr/lib/raspberrypi-sys-mods/imager_custom set_wlan '${var.wifi_name}' '${var.wifi_password}' 'US'
+        else
+        cat >/etc/wpa_supplicant/wpa_supplicant.conf <<'WPAEOF'
+        country=US
+        ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+        ap_scan=1
+
+        update_config=1
         network={
             ssid="${var.wifi_name}"
             psk="${var.wifi_password}"
         }
+
+        WPAEOF
+        chmod 600 /etc/wpa_supplicant/wpa_supplicant.conf
+        rfkill unblock wifi
+        for filename in /var/lib/systemd/rfkill/*:wlan ; do
+            echo 0 > $filename
+        done
+        fi
+        rm -f /boot/firstrun.sh
+        sed -i 's| systemd.run.*||g' /boot/cmdline.txt
+        exit 0
         EOS
     }
 
@@ -72,6 +91,7 @@ build {
 
     provisioner "shell" {
         inline = [
+            "chmod 0755 /boot/firstrun.sh",
             "chmod 0644 /etc/image_version",
             "chmod 0600 /etc/wpa_supplicant/wpa_supplicant.conf",
             "chmod 0755 /usr/local/bin/tty1_system_info",
@@ -95,15 +115,17 @@ build {
             "raspi-config nonint disable_raspi_config_at_boot",
             # install dependencies
             "DEBIAN_FRONTEND=noninteractive apt install -y puppet git r10k vim",
+            # handle initial configuration the way rpi-imager does
+            "sed -i 's|$| cfg80211.ieee80211_regdom=US systemd.run=/boot/firstrun.sh systemd.run_success_action=reboot systemd.unit=kernel-command-line.target|' /boot/cmdline.txt"
         ]
         inline_shebang = "/bin/sh -ex"
     }
     post-processor "checksum" {
-        output         = "2023-10-10-raspios-bookworm-armhf-lite_custom.img.sha256sum"
+        output         = "2024-07-04-raspios-bookworm-armhf-lite_custom.img.sha256sum"
         checksum_types = ["sha256"]
     }
     post-processor "compress" {
-        output              = "2023-10-10-raspios-bookworm-armhf-lite_custom.img.tar.gz"
+        output              = "2024-07-04-raspios-bookworm-armhf-lite_custom.img.tar.gz"
         compression_level   = 9
         keep_input_artifact = true
     }
