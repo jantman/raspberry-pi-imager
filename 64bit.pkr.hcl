@@ -1,8 +1,8 @@
 source "arm-image" "raspberry_pi_os_64bit" {
-    iso_url                   = "https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2024-07-04/2024-07-04-raspios-bookworm-arm64-lite.img.xz"
-    iso_checksum              = "sha256:43d150e7901583919e4eb1f0fa83fe0363af2d1e9777a5bb707d696d535e2599"
+    iso_url                   = "https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2025-10-02/2025-10-01-raspios-trixie-arm64-lite.img.xz"
+    iso_checksum              = "sha256:79146135607ffe8acac94e5ff501de6fc49583117de5ad08c45a32c73ae2a027"
     last_partition_extra_size = 268435456
-    output_filename           = "2024-07-04-raspios-bookworm-arm64-lite_custom.img"
+    output_filename           = "2025-10-01-raspios-trixie-arm64-lite_custom.img"
     qemu_binary               = "qemu-aarch64-static"
 }
 
@@ -94,7 +94,6 @@ build {
         inline = [
             "chmod 0755 /boot/firstrun.sh",
             "chmod 0644 /etc/image_version",
-            "chmod 0600 /etc/wpa_supplicant/wpa_supplicant.conf",
             "chmod 0755 /usr/local/bin/tty1_system_info",
             "chmod 0644 /etc/cron.d/tty1_system_info",
             "chmod 0700 /root/configure-pi.sh",
@@ -110,11 +109,10 @@ build {
             "raspi-config nonint do_boot_behaviour B1",
             # set WiFi country
             "raspi-config nonint do_wifi_country US",
-            # disable rfkill
-            "bash -c 'for filename in /var/lib/systemd/rfkill/*:wlan ; do [[ -e \"$filename\" ]] && echo 0 > \"$filename\"; done'",
             # disable prompt to run raspi-config after boot
             "raspi-config nonint disable_raspi_config_at_boot",
             # install dependencies
+            "apt-get update",
             "DEBIAN_FRONTEND=noninteractive apt install -y puppet git r10k vim",
             # handle initial configuration the way rpi-imager does
             "sed -i 's|$| cfg80211.ieee80211_regdom=US systemd.run=/boot/firstrun.sh systemd.run_success_action=reboot systemd.unit=kernel-command-line.target|' /boot/cmdline.txt"
@@ -122,11 +120,11 @@ build {
         inline_shebang = "/bin/sh -ex"
     }
     post-processor "checksum" {
-        output         = "2024-07-04-raspios-bookworm-arm64-lite_custom.img.sha256sum"
+        output         = "2025-10-01-raspios-trixie-arm64-lite_custom.img.sha256sum"
         checksum_types = ["sha256"]
     }
     post-processor "compress" {
-        output              = "2024-07-04-raspios-bookworm-arm64-lite_custom.img.tar.gz"
+        output              = "2025-10-01-raspios-trixie-arm64-lite_custom.img.tar.gz"
         compression_level   = 9
         keep_input_artifact = true
     }

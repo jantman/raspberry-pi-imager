@@ -11,7 +11,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set Release Name
         id: set-release-name
         run: echo "RELEASE=build${{ github.run_number }}_$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
@@ -60,7 +60,7 @@ jobs:
           body: ${{ steps.set-release-name.outputs.RELEASE }}
       - name: Archive Output
         if: github.ref_name != 'main'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-result
           path: |

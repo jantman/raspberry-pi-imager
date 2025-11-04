@@ -1,8 +1,8 @@
 source "arm-image" "raspberry_pi_os_32bit" {
-    iso_url                   = "https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2024-07-04/2024-07-04-raspios-bookworm-armhf-lite.img.xz"
-    iso_checksum              = "sha256:df9c192d66d35e1ce67acde33a5b5f2b81ff02d2b986ea52f1f6ea211d646a1b"
+    iso_url                   = "https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2025-10-02/2025-10-01-raspios-trixie-armhf-lite.img.xz"
+    iso_checksum              = "sha256:22a02428e7de5345ccf865fa3e2fe06f3aa56afdde98bc23d9d91e83320b3511"
     last_partition_extra_size = 268435456
-    output_filename           = "2024-07-04-raspios-bookworm-armhf-lite_custom.img"
+    output_filename           = "2025-10-01-raspios-trixie-armhf-lite_custom.img"
 }
 
 build {
@@ -93,7 +93,6 @@ build {
         inline = [
             "chmod 0755 /boot/firstrun.sh",
             "chmod 0644 /etc/image_version",
-            "chmod 0600 /etc/wpa_supplicant/wpa_supplicant.conf",
             "chmod 0755 /usr/local/bin/tty1_system_info",
             "chmod 0644 /etc/cron.d/tty1_system_info",
             "chmod 0700 /root/configure-pi.sh",
@@ -109,11 +108,10 @@ build {
             "raspi-config nonint do_boot_behaviour B1",
             # set WiFi country
             "raspi-config nonint do_wifi_country US",
-            # disable rfkill
-            "bash -c 'for filename in /var/lib/systemd/rfkill/*:wlan ; do [[ -e \"$filename\" ]] && echo 0 > \"$filename\"; done'",
             # disable prompt to run raspi-config after boot
             "raspi-config nonint disable_raspi_config_at_boot",
             # install dependencies
+            "apt-get update",
             "DEBIAN_FRONTEND=noninteractive apt install -y puppet git r10k vim",
             # handle initial configuration the way rpi-imager does
             "sed -i 's|$| cfg80211.ieee80211_regdom=US systemd.run=/boot/firstrun.sh systemd.run_success_action=reboot systemd.unit=kernel-command-line.target|' /boot/cmdline.txt"
@@ -121,11 +119,11 @@ build {
         inline_shebang = "/bin/sh -ex"
     }
     post-processor "checksum" {
-        output         = "2024-07-04-raspios-bookworm-armhf-lite_custom.img.sha256sum"
+        output         = "2025-10-01-raspios-trixie-armhf-lite_custom.img.sha256sum"
         checksum_types = ["sha256"]
     }
     post-processor "compress" {
-        output              = "2024-07-04-raspios-bookworm-armhf-lite_custom.img.tar.gz"
+        output              = "2025-10-01-raspios-trixie-armhf-lite_custom.img.tar.gz"
         compression_level   = 9
         keep_input_artifact = true
     }
