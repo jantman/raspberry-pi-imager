@@ -47,6 +47,10 @@ The first step is to build a base image, which will be written to the SD card fo
 
 Just push a new commit to the repo and it will be built. If it's on the `main` branch, it will be uploaded as a Release.
 
+### Updating to the Latest Raspberry Pi OS
+
+Run `./update_raspios.sh` to automatically update `32bit.pkr.hcl` and `64bit.pkr.hcl` to the latest Raspberry Pi OS Lite release. The script fetches the newest image listing from `downloads.raspberrypi.com`, retrieves the SHA256 checksum, and updates the `iso_url`, `iso_checksum`, `output_filename`, and post-processor output paths in both files. If the files already reference the latest release, no changes are made.
+
 ### Locally
 
 To build locally with Docker, run `./build_docker.sh` which is based on the example in the [packer-plugin-arm-image README](https://github.com/solo-io/packer-plugin-arm-image#running-with-docker) with slight modifications. **NOTE** that `./packer_cache/` will contain root-owned files.
