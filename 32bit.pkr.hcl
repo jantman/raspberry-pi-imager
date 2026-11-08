@@ -1,8 +1,8 @@
 source "arm-image" "raspberry_pi_os_32bit" {
-    iso_url                   = "https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2026-06-19/2026-06-18-raspios-trixie-armhf-lite.img.xz"
-    iso_checksum              = "sha256:ea4e84c501d6dd4f4b1d04eb84df133a03f90a05ee2e8ab849185c17c2b0707b"
+    iso_url                   = "https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2026-10-06/2026-10-06-raspios-trixie-armhf-lite.img.xz"
+    iso_checksum              = "sha256:2c302771f34c67a0b7ae7aa2e0dcdd3eac660504be59193c011ba79d412e1632"
     last_partition_extra_size = 268435456
-    output_filename           = "2026-06-18-raspios-trixie-armhf-lite_custom.img"
+    output_filename           = "2026-10-06-raspios-trixie-armhf-lite_custom.img"
 }
 
 build {
@@ -119,11 +119,11 @@ build {
         inline_shebang = "/bin/sh -ex"
     }
     post-processor "checksum" {
-        output         = "2026-06-18-raspios-trixie-armhf-lite_custom.img.sha256sum"
+        output         = "2026-10-06-raspios-trixie-armhf-lite_custom.img.sha256sum"
         checksum_types = ["sha256"]
     }
     post-processor "compress" {
-        output              = "2026-06-18-raspios-trixie-armhf-lite_custom.img.tar.gz"
+        output              = "2026-10-06-raspios-trixie-armhf-lite_custom.img.tar.gz"
         compression_level   = 9
         keep_input_artifact = true
     }

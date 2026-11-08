@@ -1,8 +1,8 @@
 source "arm-image" "raspberry_pi_os_64bit" {
-    iso_url                   = "https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2026-06-19/2026-06-18-raspios-trixie-arm64-lite.img.xz"
-    iso_checksum              = "sha256:acff736ca7945e3b305f07cda4abdb870910e12634991da69783611756e381b3"
+    iso_url                   = "https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2026-10-06/2026-10-06-raspios-trixie-arm64-lite.img.xz"
+    iso_checksum              = "sha256:483db18a48da399b5b7022ffae9a07bc6d99daab30e593aedac09b69ff422843"
     last_partition_extra_size = 268435456
-    output_filename           = "2026-06-18-raspios-trixie-arm64-lite_custom.img"
+    output_filename           = "2026-10-06-raspios-trixie-arm64-lite_custom.img"
     qemu_binary               = "qemu-aarch64-static"
 }
 
@@ -120,11 +120,11 @@ build {
         inline_shebang = "/bin/sh -ex"
     }
     post-processor "checksum" {
-        output         = "2026-06-18-raspios-trixie-arm64-lite_custom.img.sha256sum"
+        output         = "2026-10-06-raspios-trixie-arm64-lite_custom.img.sha256sum"
         checksum_types = ["sha256"]
     }
     post-processor "compress" {
-        output              = "2026-06-18-raspios-trixie-arm64-lite_custom.img.tar.gz"
+        output              = "2026-10-06-raspios-trixie-arm64-lite_custom.img.tar.gz"
         compression_level   = 9
         keep_input_artifact = true
     }
